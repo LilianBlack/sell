@@ -1,7 +1,6 @@
 <template>
-  <div class="app">
-    <!-- 出口 -->
-    <router-view></router-view>
+  <div>
+    <h1>编辑订单</h1>
   </div>
 </template>
 
@@ -10,7 +9,4 @@ export default {};
 </script>
 
 <style lang="less" scoped>
-.app {
-  height: 100%;
-}
 </style>

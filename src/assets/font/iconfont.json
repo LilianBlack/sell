@@ -1,0 +1,44 @@
+{
+  "id": "1930776",
+  "name": "element-ui",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "1005402",
+      "name": "删除已选群成员-叉叉",
+      "font_class": "shanchuyixuanqunchengyuanchacha",
+      "unicode": "e60f",
+      "unicode_decimal": 58895
+    },
+    {
+      "icon_id": "1788955",
+      "name": "锁",
+      "font_class": "suo",
+      "unicode": "e6a0",
+      "unicode_decimal": 59040
+    },
+    {
+      "icon_id": "10143467",
+      "name": "用户",
+      "font_class": "yonghu",
+      "unicode": "e610",
+      "unicode_decimal": 58896
+    },
+    {
+      "icon_id": "1597923",
+      "name": "闭眼",
+      "font_class": "biyan",
+      "unicode": "e6ba",
+      "unicode_decimal": 59066
+    },
+    {
+      "icon_id": "6844457",
+      "name": "睁眼",
+      "font_class": "zhengyan",
+      "unicode": "e640",
+      "unicode_decimal": 58944
+    }
+  ]
+}
