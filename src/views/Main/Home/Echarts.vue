@@ -1,18 +1,20 @@
 <template>
   <div class="my-echarts-box">
-    <ul class="my-echarts-menu">
-      <EchartsItem v-for="(v,i) in eTheme" :key="i" :data="v"></EchartsItem>
-    </ul>
+    <div class="my-echarts-menu">
+      <el-col class="my-echarts-item" :span="6" v-for="(v,i) in eTheme" :key="i">
+        <Card :data="v"></Card>
+      </el-col>
+    </div>
     <div ref="chart" class="my-echarts"></div>
   </div>
 </template>
 
 <script>
-import EchartsItem from "./EchartsItem.vue";
+import Card from "@/components/Card.vue";
 
 export default {
   components: {
-    EchartsItem
+    Card
   },
   mounted() {
     // ounted生命周期函数中实例化echarts对象
@@ -115,6 +117,15 @@ export default {
   margin-top: 20px;
   display: flex;
   justify-content: space-around;
+  .my-echarts-item {
+    margin: 0 20px;
+    &:first-child {
+      margin-left: 0;
+    }
+    &:last-child {
+      margin-right: 0;
+    }
+  }
   /deep/ .echarts-item {
     &:first-child {
       .my-icon {

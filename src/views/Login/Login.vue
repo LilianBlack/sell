@@ -36,36 +36,69 @@
 </template>
 
 <script>
+// 引入正则表达式
+import { REG_ACC, REG_PWD } from "@/utils/reg";
+
+// 引入接口层的 登录 ajax函数   【接口层没有暴露一个对象  这里要加 {} 】
+import { checkLogin } from "@/api/account";
+
+// 引入local工具函数
+import local from "@/utils/local";
+
 export default {
   data() {
+    const checkAcc = (rule, val, callback) => {
+      if (!val) {
+        callback(new Error("用户名不能为空"));
+      } else if (!REG_ACC.test(val)) {
+        callback(new Error("请输入长度 4-10的中文，英文字母和数字"));
+      } else {
+        callback();
+      }
+    };
+    const checkPwd = (rule, val, callback) => {
+      if (!val) {
+        callback(new Error("密码不能为空"));
+      } else if (!REG_PWD.test(val)) {
+        callback(new Error("密码只能是字母数字，长度 3-12位"));
+      } else {
+        callback();
+      }
+    };
     return {
       loginForm: {
         account: "",
         password: ""
       },
-      //   内置验证
+      //   自定义验证
       rules: {
-        account: { required: true, message: "请输入账号", trigger: "blur" },
-        password: [
-          { required: true, message: "请输入密码", trigger: "blur" },
-          { min: 6, max: 12, message: "长度在 3 到 12 个字符", trigger: "blur" }
-        ]
+        account: { required: true, validator: checkAcc, trigger: "blur" },
+        password: { required: true, validator: checkPwd, trigger: "blur" }
       },
       isShowPwd: false
     };
   },
   methods: {
+    //   点击提交  触发表单所有验证
     submitForm() {
-      this.$refs.loginForm.validate(valid => {
+      this.$refs.loginForm.validate(async valid => {
         if (valid) {
-          // 发送ajax  成功后跳转
-          alert("成功登月！");
-          this.$router.push("/");
+          // 通过前段验证  -- 发送ajax  登陆请求
+          //   解构 ajax请求返回的数据
+          let { code, msg, role, token } = await checkLogin(this.loginForm);
+          if (code === 0) {
+            local.set("t_k", token); //把token存入本地
+            this.$message({ type: "success", message: msg }); //登录成功提示
+            this.$router.push("/");
+          } else if (code === 1) {
+            this.$message.error(msg);
+          }
         } else {
           alert("登月失败");
         }
       });
     },
+    // 密码的显示和隐式切换
     changeShowPwd(e) {
       if (e.target.className.includes("yan")) {
         this.isShowPwd = !this.isShowPwd;

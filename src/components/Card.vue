@@ -1,11 +1,11 @@
 <template>
-  <el-col class="echarts-item" :span="5">
+  <div class="echarts-item">
     <div class="my-icon" :class="data.className"></div>
     <div class="my-icon-text">
       <p>{{data.theme}}</p>
       <p>{{data.num}}</p>
     </div>
-  </el-col>
+  </div>
 </template>
 
 <script>
@@ -28,11 +28,13 @@ export default {
   display: flex;
   justify-content: space-between;
   padding: 20px 40px;
-  height: 110px;
+  height: 70px;
   .my-icon {
     font-size: 70px;
+    flex: 0 0 80px;
   }
   .my-icon-text {
+    flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -42,7 +44,7 @@ export default {
     }
     p:last-child {
       font-weight: 700;
-      margin-top: 10px;
+      margin-top: 0px;
     }
   }
 }

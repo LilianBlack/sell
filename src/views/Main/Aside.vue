@@ -23,13 +23,13 @@
       </el-menu-item>
 
       <!-- 订单管理 -->
-      <el-menu-item index="/order/order-list">
+      <el-menu-item index="/order">
         <i class="el-icon-menu"></i>
         <span slot="title">订单管理</span>
       </el-menu-item>
 
       <!-- 商品管理 -->
-      <el-submenu index="3">
+      <el-submenu index="/goods">
         <template slot="title">
           <i class="el-icon-location"></i>
           <span>商品管理</span>
@@ -46,7 +46,7 @@
       </el-menu-item>
 
       <!-- 账号管理 -->
-      <el-submenu index="4">
+      <el-submenu index="/accounts">
         <template slot="title">
           <i class="el-icon-location"></i>
           <span>账号管理</span>
@@ -58,7 +58,7 @@
       </el-submenu>
 
       <!-- 销售统计 -->
-      <el-submenu index="5">
+      <el-submenu index="/sale-statistics">
         <template slot="title">
           <i class="el-icon-location"></i>
           <span>销售统计</span>

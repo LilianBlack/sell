@@ -1,0 +1,136 @@
+封装时   接到一个参数是引用数据类型时候，default值要写函数返回一个对象/数组    ()=>( return {} )   或者 ()=>( {} )   或者()=>[]
+
+可能多地使用的   封装在components文件夹里
+
+
+管理系统不考虑响应式
+
+
+封装主页小卡片
+二次封装账号页面的面板
+表单组件
+账号 商品
+
+
+表单的自定义验证
+    form表单处
+        validator函数
+        使用方式 ：
+        rules:{
+            acc:{validator:myfun, trigger:'blur'}
+            // 下面是必填
+            acc:{require:true,  validator:自定义函数名, trigger:'blur'}
+        }
+    在data(){}中return{}前面  ----  定义函数myfun 
+     --------- 【 const myfun(rule, val, callback)=>{} 】
+    myfun这个自定义验证函数 自动传入三个值   myfun形参是：rule\val\callback
+    验证通过----直接调用callback函数
+    验证不通过-----要给callback传一个参数 参数是 new Error('相对的错误提示')
+
+
+    同一个项目各个位置的正则应统一 因此正则不写死，用变量
+    工具函数utils--> reg.js    项目中通用正则
+            const ACC_REG =
+            const PWD_REG =
+        使用：  在使用的vue文件引入   import {ACC_REG，  PWD_REG} from '@/utils/reg.js'
+
+
+    一致性验证：【确认密码】
+        做完非空验证后
+        验证 本输入的值是否等于上一个输入的值
+        小bug----在填好确认密码后 再修改新密码的值    不会触发一致性验证
+        ---解决：反向触发【在输入新密码的验证函数中验证一次一致性】
+                如果确认新密码输入框不为空，则使用表单的函数validateField
+                  this.$refs.对应的表单的ref值.validateField('要验证的部分字段名')进行一致性验证
+                  注意：  不是给输入的值  是给这个字段的名字
+
+
+
+面包屑
+    计算面包屑函数----一进入页面就调用函数、侦听器观察地址栏变化，变化了就调用函数
+
+
+
+
+    在index.js中----对有二级菜单的一级菜单栏重定向到自己的第一个子地址
+    index.js  --->  配置 meta:{title:'订单管理}
+
+
+
+
+    后台数据库名是 sell    所以创建的数据库必须叫sell
+
+
+
+
+
+改数据库密码
+7-11   day 03
+    调试接口
+    大企业---接口分层管理  不会直接发请求，调用工具函数即可发送请求
+    工具函数层---> ajax函数接口层  ---> 分模块封装ajax函数
+
+    同时下载axios qs     命令：yarn add axios qs 或者 npm i axios qs
+    在工具函数中引入axios和qs  import ....
+
+    拼接地址    
+
+    请求拦截的 config、相应拦截的response是对象
+
+    启动服务器   后台先安装依赖
+    解构【回车发送】
+
+
+    token========请求的权限问题401
+    token的作用：接口鉴权
+        先请求登录接口【不需要权限】---响应数据有个令牌--token
+        后面请求时都带上token【放请求头】===在请求拦截函数中从本地取出token，给config的属性header对象添加属性Authorization【不能写成其他的】和属性值
+        得到token的时候，将它存入本地
+
+
+    暴露的时候使用的是 export default{}  则引入的时候不加{}
+    如果暴露出来的时候没有使用export default{}【暴露一个对象】,引用的时候要加{},如reg.js的引用
+
+    postman测试的时候
+    先登录， 得到的token 不复制Barea  复制随机代码放在authorasition的ba...里
+
+
+    响应拦截器----根据响应code弹窗，后续的各处请求操作可以不再写弹窗
+    对 response.data先进行存在性判断，再解构
+    响应的 code 和  msg 默认值是undefined
+    ElementUI 提供了一个消息弹窗 单独引入   
+     vue文件中this指向的是实例对象，.js文件中的this被vue重置为undefined
+     单独引入的 Message === this.$msg
+
+
+     能够统一处理的---都在响应拦截器中处理
+
+
+     ctime 的处理 
+        下载yarn moment  
+        引入moment
+        循环数组--处理时间ctime
+    分页
+    删除  
+    批量删除
+
+
+    data中占位的数据一般是用于渲染的
+
+    不渲染但是想全局的  可以挂在this上，， 如 let this.ids
+
+
+    给后台发数组  需要 JSON.stringify  
+    保证后台收到字符串
+
+    删除的小bug
+        当最后一页的数据删除完了以后，不会自动跳转  而是显示   暂无数据 留在本页
+        优化： 在获取数据的函数中进行 边界判断
+                还有，当已经是第一页的时候，不能再将页码减一了
+                if( !data.length && page != 1 )
+
+        如果用户没有选择的时候就点击批量删除，会导致发送一个无效的请求
+
+    dropdown 组件自带事件 command
+        选中下拉框中的元素时，元素绑定的command的值会自动传入command事件触发的函数内部
+    token可以设置失效时间？
