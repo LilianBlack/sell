@@ -1,35 +1,16 @@
 <template>
   <div class="my-echarts-box">
-    <div class="my-echarts-menu">
-      <el-col class="my-echarts-item" :span="6" v-for="(v,i) in eTheme" :key="i">
-        <Card :data="v"></Card>
-      </el-col>
-    </div>
     <div ref="chart" class="my-echarts"></div>
   </div>
 </template>
 
 <script>
-import Card from "@/components/Card.vue";
-
 export default {
-  components: {
-    Card
-  },
   mounted() {
     // ounted生命周期函数中实例化echarts对象
     this.getEchartData();
   },
-  data() {
-    return {
-      eTheme: [
-        { className: "el-icon-document", theme: "总订单", num: "104,200" },
-        { className: "el-icon-coin", theme: "总销售额", num: "104,200" },
-        { className: "el-icon-tickets", theme: "今日订单数", num: "104,200" },
-        { className: "el-icon-trophy", theme: "今日销售额", num: "104,200" }
-      ]
-    };
-  },
+
   methods: {
     getEchartData() {
       const chart = this.$refs.chart;
@@ -113,42 +94,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.my-echarts-menu {
-  margin-top: 20px;
-  display: flex;
-  justify-content: space-around;
-  .my-echarts-item {
-    margin: 0 20px;
-    &:first-child {
-      margin-left: 0;
-    }
-    &:last-child {
-      margin-right: 0;
-    }
-  }
-  /deep/ .echarts-item {
-    &:first-child {
-      .my-icon {
-        color: cornflowerblue;
-      }
-    }
-    &:nth-child(2) {
-      .my-icon {
-        color: crimson;
-      }
-    }
-    &:nth-child(3) {
-      .my-icon {
-        color: cornflowerblue;
-      }
-    }
-    &:nth-child(4) {
-      .my-icon {
-        color: darkcyan;
-      }
-    }
-  }
-}
 .my-echarts {
   background: #fff;
   height: 400px;

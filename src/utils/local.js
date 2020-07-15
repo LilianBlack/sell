@@ -4,7 +4,7 @@
 // 暴露一个对象
 export default {
     get(key) {
-        JSON.parse(localStorage.getItem(key))
+        return JSON.parse(localStorage.getItem(key))
     },
     set(key, val) {
         localStorage.setItem(key, JSON.stringify(val));

@@ -15,9 +15,10 @@ axios.defaults.timeout = 5000;   //超时
 
 // 请求拦截[发送前的拦截]
 axios.interceptors.request.use((config) => {
-    console.log('查看请求拦截', config);
+    // console.log('查看请求拦截', config);
     // 取出本地存的token   放入请求头
     let token = local.get('t_k') || '';
+    // console.log(token)
     if (token) {
         // token存在---在请求头携带token
         config.headers.Authorization = token;
@@ -27,7 +28,7 @@ axios.interceptors.request.use((config) => {
 
 // 响应拦截
 axios.interceptors.response.use((response) => {
-    console.log('查看响应拦截： ', response);
+    // console.log('查看响应拦截： ', response);
     // 在响应拦截器中弹窗
     if (response.data.code != undefined && response.data.msg != undefined) {
         let { code, msg } = response.data;

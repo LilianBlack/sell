@@ -7,41 +7,58 @@
     </el-col>
 
     <el-col :span="12" class="logined-info">
-      <el-dropdown>
+      <!--  @command="handleCommand" 点击菜单项后会触发事件，用户可以通过相应的菜单项 key 进行不同的操作 -->
+      <el-dropdown @command="handleCommand">
         <span class="el-dropdown-link">
-          欢迎你，唐美美
+          欢迎你，
+          <span>{{account}}</span>
           <i class="el-icon-arrow-down el-icon--right"></i>
         </span>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item>切换账号</el-dropdown-item>
-          <el-dropdown-item>退出登录</el-dropdown-item>
+          <el-dropdown-item command="personal">个人中心</el-dropdown-item>
+          <el-dropdown-item command="logout">退出登录</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
-      <img :src="avatarImg" alt />
+      <img :src="imgUrl" alt />
     </el-col>
   </div>
 </template>
 
 <script>
+import local from "@/utils/local";
+import { getUserInfo } from "@/api/account";
+
 export default {
   data() {
     return {
-      avatarImg: require("@/assets/imgs/c2.jpg"),
       //   面包屑 数组
-      breadArr: []
+      breadArr: [],
+      account: "", //登录时的用户名,
+      imgUrl: "" //头像的名字
     };
   },
-  created() {
-    //   created期间 调用并执行计算面包屑函数
-    this.calculateBreadCrumb();
-  },
+
   watch: {
     //   监听地址变化   变化的时候就要计算一次面包屑数组
     "$route.path"() {
       this.calculateBreadCrumb();
     }
   },
+
   methods: {
+    //   获取用户数据，渲染头部用户信息
+    // 获取数据
+    async fetchData() {
+      let res = await getUserInfo(); // 获取数据 赋值给user
+
+      // 赋值渲染头像 和 账号
+      this.imgUrl = res.imgUrl;
+      this.account = res.account;
+
+      // 把当前用户数据存入本地
+      local.set("user", res);
+    },
+
     //   计算面包屑
     calculateBreadCrumb() {
       let arr = [{ title: "首页", path: "/home" }]; //初始值是首页
@@ -56,7 +73,31 @@ export default {
         }
       });
       this.breadArr = arr; //将算出来的面包屑数组赋值给data中的
+    },
+
+    handleCommand(cmd) {
+      //cmd自动传入
+      if (cmd === "personal") {
+        this.$router.push("/accounts/personal");
+      } else if (cmd === "logout") {
+        this.$message({ message: "答应我，下次还要来", type: "info" });
+        local.clear();
+        this.$router.push("/login");
+      }
     }
+  },
+
+  created() {
+    //   获取用户数据，渲染头部用户信息
+    this.fetchData();
+
+    //   created期间 调用并执行计算面包屑函数
+    this.calculateBreadCrumb();
+    // this.account = local.get("account");
+
+    this.$bus.$on("update_avatar", () => {
+      this.fetchData();
+    });
   }
 };
 </script>
@@ -72,10 +113,11 @@ export default {
     padding: 10px;
   }
   .logined-info {
-    width: 200px;
+    width: 320px;
     height: 50px;
     display: flex;
-    justify-content: center;
+    margin-right: 10px;
+    justify-content: flex-end;
     align-items: center;
     span {
       margin-right: 10px;

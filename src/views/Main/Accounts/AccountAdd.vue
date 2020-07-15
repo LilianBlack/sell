@@ -46,7 +46,7 @@ import { REG_ACC, REG_PWD } from "@/utils/reg";
 // 引入local
 import local from "@/utils/local";
 // 引入ajax请求函数
-import { addAcc } from "@/api/addAcc";
+import { addAcc } from "@/api/account";
 
 export default {
   components: {
@@ -78,7 +78,7 @@ export default {
         account: { required: true, validator: chechAcc, trigger: "blur" },
         password: { required: true, validator: chechPwd, trigger: "blur" },
         //  内置空验证
-        grouserGroupup: {
+        userGroup: {
           required: true,
           message: "请选择用户组",
           trigger: "blur"

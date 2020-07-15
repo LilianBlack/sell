@@ -88,6 +88,7 @@ export default {
           let { code, msg, role, token } = await checkLogin(this.loginForm);
           if (code === 0) {
             local.set("t_k", token); //把token存入本地
+            local.set("account", this.loginForm.account);
             this.$message({ type: "success", message: msg }); //登录成功提示
             this.$router.push("/");
           } else if (code === 1) {
@@ -118,7 +119,6 @@ export default {
   align-items: center;
   width: 100%;
   .login-form {
-    // color: cadetblue;
     color: darksalmon;
     width: 300px;
     h3 {

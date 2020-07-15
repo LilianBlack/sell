@@ -4,51 +4,43 @@
       <div slot="title">商品添加</div>
       <div slot="content">
         <el-form ref="form" :model="form" label-width="80px">
-          <el-form-item label="商品名称" placeholder="商品名称">
-            <el-input class="good-title" v-model="form.name"></el-input>
+          <el-form-item label="商品名称">
+            <el-input class="good-title" v-model="form.name" placeholder="商品名称"></el-input>
           </el-form-item>
 
-          <el-form-item label="商品分类" placeholder="请选择商品分类">
-            <el-select v-model="form.region" placeholder="请选择活动区域">
-              <el-option label="区域一" value="shanghai"></el-option>
-              <el-option label="区域二" value="beijing"></el-option>
+          <el-form-item label="商品分类">
+            <el-select v-model="form.category" placeholder="请选择商品分类">
+              <el-option
+                v-for="cate in categories"
+                :key="cate.cateName"
+                :value="cate.cateName"
+              >{{cate.cateName}}</el-option>
             </el-select>
           </el-form-item>
 
           <div class="good-price">
             <span class="price-title">商品价格</span>
-            <el-input-number v-model="num" @change="handleChange" :min="1" :max="10" label="描述文字"></el-input-number>
+            <el-input-number v-model="form.price" @change="handleChange" label="描述文字"></el-input-number>
           </div>
 
           <div class="good-pic">
             <span class="pic-title">商品图片</span>
-            <el-upload action="#" list-type="picture-card" :auto-upload="false">
-              <i slot="default" class="el-icon-plus"></i>
-              <div slot="file" slot-scope="{file}">
-                <img class="el-upload-list__item-thumbnail" :src="file.url" alt />
-                <span class="el-upload-list__item-actions">
-                  <span
-                    class="el-upload-list__item-preview"
-                    @click="handlePictureCardPreview(file)"
-                  >
-                    <i class="el-icon-zoom-in"></i>
-                  </span>
-                  <span
-                    v-if="!disabled"
-                    class="el-upload-list__item-delete"
-                    @click="handleDownload(file)"
-                  >
-                    <i class="el-icon-download"></i>
-                  </span>
-                  <span
-                    v-if="!disabled"
-                    class="el-upload-list__item-delete"
-                    @click="handleRemove(file)"
-                  >
-                    <i class="el-icon-delete"></i>
-                  </span>
-                </span>
-              </div>
+            <el-upload
+              action="http://127.0.0.1:5000/goods/goods_img_upload"
+              :on-success="handleAvatarSuccess"
+              :before-upload="beforeAvatarUpload"
+              list-type="picture-card"
+              :show-file-list="false"
+              class="avatar-uploader"
+            >
+              <img
+                v-if="form.imgUrl"
+                class="el-upload-list__item-thumbnail"
+                :src="imgBase + form.imgUrl"
+                style="width:100%; height:100%;"
+                alt
+              />
+              <i v-else slot="default" class="el-icon-plus"></i>
             </el-upload>
           </div>
 
@@ -59,7 +51,7 @@
               type="textarea"
               :rows="2"
               placeholder="请输入内容"
-              v-model="textarea"
+              v-model="form.goodsDesc"
             ></el-input>
           </div>
 
@@ -74,6 +66,7 @@
 
 <script>
 import Pane from "@/components/Pane.vue";
+import { addGood, getCateName } from "@/api/goods";
 
 export default {
   components: {
@@ -81,39 +74,65 @@ export default {
   },
   data() {
     return {
+      imgBase: "http://127.0.0.1:5000/upload/imgs/goods_img/",
       // 名称 分类
       form: {
         name: "",
-        region: ""
+        category: "",
+        price: 20,
+        imgUrl: "",
+        goodsDesc: ""
       },
-      // 计数器
-      num: 1,
+      categories: [],
       // 上传图片
       dialogImageUrl: "",
       dialogVisible: false,
-      disabled: false,
-      //   文本域
-      textarea: ""
+      disabled: false
     };
   },
+  async created() {
+    let { categories } = await getCateName();
+    this.categories = categories;
+  },
   methods: {
+    // 上传的照片  格式检查
+    beforeAvatarUpload(file) {
+      const isJPG = file.type === "image/jpeg" || "image/png";
+      const isLt2M = file.size / 1024 / 1024 < 2;
+
+      if (!isJPG) {
+        this.$message.error("上传头像图片只能是 JPG / PNG 格式!");
+      }
+      if (!isLt2M) {
+        this.$message.error("上传头像图片大小不能超过 2MB!");
+      }
+      return isJPG && isLt2M;
+    },
+    // 接收上传图片成功的响应数据
+    handleAvatarSuccess(res) {
+      let { code, imgUrl, msg } = res;
+      if (code === 0) {
+        this.$message({ type: "success", message: msg });
+        this.form.imgUrl = imgUrl;
+      }
+    },
     //   计数器
     handleChange(value) {
       console.log(value);
     },
-    //   上传
-    handleRemove(file) {
-      console.log(file);
-    },
-    handlePictureCardPreview(file) {
-      this.dialogImageUrl = file.url;
-      this.dialogVisible = true;
-    },
-    handleDownload(file) {
-      console.log(file);
-    },
-    onSubmit() {
-      console.log("submit!");
+
+    async onSubmit() {
+      //   console.log("价格", this.form.price + "");
+      let { code } = await addGood({
+        name: this.form.name,
+        category: this.form.category,
+        price: this.form.price, //转字符串
+        imgUrl: this.form.imgUrl,
+        goodsDesc: this.form.goodsDesc
+      });
+      if (code === 0) {
+        this.$router.push("/goods/goods-list");
+      }
     }
   }
 };

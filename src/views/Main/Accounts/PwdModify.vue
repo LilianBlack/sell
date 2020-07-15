@@ -41,19 +41,30 @@
 <script>
 import Pane from "@/components/Pane.vue";
 import { REG_ACC, REG_PWD } from "@/utils/reg";
+import { checkOldPwd, changePwd } from "@/api/account";
+import local from "@/utils/local";
 
 export default {
   components: {
     Pane
   },
   data() {
-    const checkOldPwd = (rule, val, callback) => {
+    //   验证原密码
+    const validateOldPwd = async (rule, val, callback) => {
       if (!val) {
         callback(new Error("不能为空"));
       } else {
-        callback();
+        let { code } = await checkOldPwd({
+          oldPwd: val
+        });
+        if (code === "11") {
+          callback(new Error("原密码不正确！"));
+        } else if (code === "00") {
+          callback();
+        }
       }
     };
+    // 验证新密码
     const checkNewPwd = (rule, val, callback) => {
       if (!val) {
         callback(new Error("新密码不能为空"));
@@ -66,6 +77,7 @@ export default {
         callback();
       }
     };
+    // 验证新密码 一致性
     const checkCheckPwd = (rule, val, callback) => {
       if (!val) {
         callback(new Error("新密码不能为空"));
@@ -85,7 +97,7 @@ export default {
     return {
       modifyForm: { oldPwd: "", newPwd: "", checkPwd: "" },
       rules: {
-        oldPwd: { validator: checkOldPwd, trigger: "blur" },
+        oldPwd: { validator: validateOldPwd, trigger: "blur" },
         newPwd: { validator: checkNewPwd, trigger: "blur" },
         checkPwd: { validator: checkCheckPwd, trigger: "blur" }
       }
@@ -93,11 +105,19 @@ export default {
   },
   methods: {
     submitForm() {
-      this.$refs.addForm.validate(valid => {
+      this.$refs.modifyForm.validate(async valid => {
         if (valid) {
-          alert("修改成功");
+          let { code } = await changePwd({
+            newPwd: this.modifyForm.newPwd
+          });
+          console.log("code======", code);
+          if (code === 0) {
+            //   clear localstorage and redirect to /login
+            local.clear();
+            this.$router.push("/login");
+          }
         } else {
-          alert("修改失败");
+          alert("不能提交修改请求");
         }
       });
     },

@@ -23,7 +23,7 @@
       </el-menu-item>
 
       <!-- 订单管理 -->
-      <el-menu-item index="/order">
+      <el-menu-item index="/order/order-list">
         <i class="el-icon-menu"></i>
         <span slot="title">订单管理</span>
       </el-menu-item>
@@ -76,7 +76,8 @@ export default {
   methods: {},
   computed: {
     currActiveFun() {
-      console.log(this.$route.path);
+      // 如果是订单编辑页面    则将订单列表的路由赋值给 导航的默认激活属性 default-active
+      if (this.$route.path === "/order/order-edit") return "/order/order-list";
       return this.$route.path;
     }
   }

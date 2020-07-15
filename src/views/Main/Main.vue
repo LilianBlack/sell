@@ -5,7 +5,7 @@
 
     <!-- 右侧内容部分占据 21 份 -->
     <el-col :span="21" class="content">
-      <!-- 右侧面包屑 -->
+      <!-- 面包屑 -->
       <BreadCrumb />
 
       <div class="content-body">
@@ -31,8 +31,13 @@ export default {
 .main {
   height: 100%;
   background: #eee;
-  .content-body {
-    padding: 0 40px;
+  .content {
+    height: 100%;
+    overflow-y: scroll;
+    .content-body {
+      padding: 0 40px;
+      overflow-y: scroll;
+    }
   }
 }
 </style>

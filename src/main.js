@@ -11,6 +11,7 @@ import Echarts from 'echarts';
 // Vue.use(Echarts);
 Vue.prototype.$echarts = Echarts;
 
+Vue.prototype.$bus = new Vue();
 
 // 引入阿里icon
 import '@/assets/font/iconfont.css';

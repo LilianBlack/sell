@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Login from '@/views/Login/Login.vue'
 import Main from '@/views/Main/Main.vue'
 import E404 from '@/views/404.vue'
+import local from '@/utils/local'
 
 
 // 解决重复跳转到自己警告让人难受的问题
@@ -45,12 +46,14 @@ const routes = [
             // 订单列表
             {
                 path: '/order/order-list',
+                name: "OrderList",
                 component: () => import('@/views/Main/Order/OrderList.vue'),
                 meta: { title: '订单列表' }
             },
             //    修改订单
             {
                 path: '/order/order-edit',
+                name: 'OrderEdit',
                 component: () => import('@/views/Main/Order/OrderEdit.vue'),
                 meta: { title: '修改订单' }
             }
@@ -157,8 +160,25 @@ const routes = [
     }
 ]
 
+
 const router = new VueRouter({
     routes
+})
+
+
+// 路由保卫
+router.beforeEach((to, from, next) => {   //to, from是对象  有属性path
+    let isLogin = local.get('t_k') ? true : false;  //通过查看本地是不是存在token 判断有没有登录
+    if (isLogin) {   //登录了的
+        next();
+    } else {  //没有登陆
+        if (to.path == '/login') { //要去登录--放行
+            next();
+        } else {   //不是去登录   重置到登录页
+            next({ path: '/login' })  //传入登录页路径对象
+        }
+
+    }
 })
 
 export default router
