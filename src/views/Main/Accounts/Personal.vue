@@ -32,7 +32,7 @@
             :on-success="handleAvatarSuccess"
             :before-upload="beforeAvatarUpload"
           >
-            <img v-if="imgUrl" :src="imgBase + imgUrl" class="avatar" />
+            <img v-if="imgUrl" :src="imgUrl" class="avatar" />
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
         </div>
@@ -55,8 +55,8 @@ export default {
   data() {
     return {
       imgBase: "http://127.0.0.1:5000/upload/imgs/acc_img/",
-      imgUrl: "",
-      tableData: {}
+      tableData: {},
+      imgUrl: ""
     };
   },
   methods: {
@@ -65,7 +65,9 @@ export default {
       let info = local.get("user");
       info.ctime = moment(info.ctime).format("YYYY-MM-DD hh:mm:ss");
       this.tableData = info;
+      this.imgUrl = info.imgUrl;
     },
+
     // 上传的照片  格式检查
     beforeAvatarUpload(file) {
       const isJPG = file.type === "image/jpeg" || "image/png";
@@ -79,17 +81,22 @@ export default {
       }
       return isJPG && isLt2M;
     },
+
     // 接收上传图片成功的响应数据
     handleAvatarSuccess(res) {
       let { code, imgUrl, msg } = res;
       if (code === 0) {
         this.$message({ type: "success", message: msg });
-        this.imgUrl = imgUrl;
+        this.imgUrl = this.imgBase + imgUrl;
       }
     },
+
     // 确认修改图片
     async confirmModify() {
-      let { code } = await editUserAvator({ imgUrl: this.imgUrl });
+      //   console.log("上传的是", this.imgUrl.substring(this.imgBase.length));
+      let { code } = await editUserAvator({
+        imgUrl: this.imgUrl.substring(this.imgBase.length)
+      });
       if (code === 0) {
         // bus中介传送   修改面包屑的头像
         this.$bus.$emit("update_avatar");
@@ -144,6 +151,7 @@ export default {
       width: 178px;
       height: 178px;
       display: block;
+      object-fit: cover;
     }
   }
 }

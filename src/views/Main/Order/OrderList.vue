@@ -127,7 +127,7 @@
       <!-- 按钮 -->
       <div slot="footer" class="dialog-footer">
         <el-button @click="lookState = false" size="mini">取 消</el-button>
-        <el-button type="primary" @click="checkEditData" v-if="isEdit" size="mini">修改</el-button>
+        <!-- <el-button type="primary" @click="checkEditData" v-if="isEdit" size="mini">修改</el-button> -->
       </div>
     </el-dialog>
   </div>

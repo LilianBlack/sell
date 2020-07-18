@@ -110,6 +110,7 @@ export default {
         console.log(v.state);
         v.isEdit = false; //每一个都默认是  只读状态
       });
+
       this.tableData = data;
       this.total = total;
     },
@@ -150,6 +151,7 @@ export default {
         });
     },
 
+    // el-witch 会自动控制开关的状态变化和变化的记录   我不用手动去改变state的值
     changeState() {
       console.log(" this.addCateForm.state =======", this.addCateForm.state);
     },

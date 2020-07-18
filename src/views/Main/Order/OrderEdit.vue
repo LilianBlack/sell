@@ -6,17 +6,17 @@
       <el-form :model="detailData" label-width="80px" size="middle">
         <!-- 订单号 -->
         <el-form-item label="订单号">
-          <el-input v-model="detailData.orderNo"></el-input>
+          <el-input v-model="detailData.orderNo" disabled></el-input>
         </el-form-item>
 
         <!-- 下单时间 -->
         <el-form-item label="下单时间">
-          <el-input v-model="detailData.orderTime"></el-input>
+          <el-input v-model="detailData.orderTime" disabled></el-input>
         </el-form-item>
 
         <!-- 手机号 -->
         <el-form-item label="手机号">
-          <el-input v-model="detailData.orderNo"></el-input>
+          <el-input v-model="detailData.orderNo" disabled></el-input>
         </el-form-item>
 
         <!-- 收货人 -->
@@ -31,7 +31,7 @@
 
         <!-- 送达时间 -->
         <el-form-item label="送达时间">
-          <el-input v-model="detailData.deliveryTime"></el-input>
+          <el-date-picker v-model="detailData.deliveryTime" type="datetime" placeholder="选择日期时间"></el-date-picker>
         </el-form-item>
 
         <!-- 用户备注 -->

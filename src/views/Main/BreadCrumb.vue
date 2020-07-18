@@ -51,6 +51,8 @@ export default {
     async fetchData() {
       let res = await getUserInfo(); // 获取数据 赋值给user
 
+      console.log("面包屑的", res);
+
       // 赋值渲染头像 和 账号
       this.imgUrl = res.imgUrl;
       this.account = res.account;
@@ -75,6 +77,7 @@ export default {
       this.breadArr = arr; //将算出来的面包屑数组赋值给data中的
     },
 
+    // 退出登录
     handleCommand(cmd) {
       //cmd自动传入
       if (cmd === "personal") {
@@ -83,6 +86,7 @@ export default {
         this.$message({ message: "答应我，下次还要来", type: "info" });
         local.clear();
         this.$router.push("/login");
+        location.reload(); //每次退出就刷新一次   解决用户权限不刷新则维持上一个用户权限的问题
       }
     }
   },

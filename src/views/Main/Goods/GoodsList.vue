@@ -98,26 +98,26 @@
 
         <!-- 编辑商品信息  蒙层 -->
         <el-dialog title="修改信息" :visible.sync="editState">
-          <el-form :model="editForm">
-            <el-form-item label="修改商品名" label-width="100px">
+          <el-form :model="editForm" label-width="100px">
+            <el-form-item label="修改商品名">
               <el-input v-model="editForm.name" autocomplete="off"></el-input>
             </el-form-item>
 
-            <el-form-item label="修改分类" label-width="100px">
-              <el-select v-model="editForm.category" placeholder="请选择用户组">
-                <el-option label="超级管理员" value="superManager"></el-option>
+            <el-form-item label="修改分类">
+              <el-select v-model="editForm.category" :placeholder="editForm.category">
+                <el-option v-for="v in cates" :key="v.cateName" :value="v.cateName">{{v.cateName}}</el-option>
               </el-select>
             </el-form-item>
 
-            <el-form-item label="修改价格" label-width="100px">
+            <el-form-item label="修改价格">
               <el-input v-model="editForm.price" autocomplete="off"></el-input>
             </el-form-item>
 
-            <el-form-item label="修改描述" label-width="100px">
+            <el-form-item label="修改描述">
               <el-input v-model="editForm.goodsDesc" autocomplete="off"></el-input>
             </el-form-item>
 
-            <el-form-item label="点击修改图片" label-width="100px">
+            <el-form-item label="点击修改图片">
               <el-upload
                 class="avatar-uploader"
                 action="http://127.0.0.1:5000/goods/goods_img_upload"

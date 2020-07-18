@@ -16,70 +16,61 @@
       unique-opened
       router
     >
-      <!-- 后台首页 -->
-      <el-menu-item index="/home">
-        <i class="el-icon-menu"></i>
-        <span slot="title">后台首页</span>
-      </el-menu-item>
+      <template v-for="menu in visibleMenu">
+        <!-- 只有或者只显示一级菜单的 -->
+        <el-menu-item
+          v-if="menu.children && menu.children.length == 1 || menu.path=='/order'"
+          :key="menu.path"
+          :index="menu.children && menu.children.length && menu.children[0].path!=='' ? menu.children[0].path : menu.path "
+        >
+          <i :class="menu.meta.icon"></i>
+          <span slot="title">{{menu.meta.title}}</span>
+        </el-menu-item>
 
-      <!-- 订单管理 -->
-      <el-menu-item index="/order/order-list">
-        <i class="el-icon-menu"></i>
-        <span slot="title">订单管理</span>
-      </el-menu-item>
-
-      <!-- 商品管理 -->
-      <el-submenu index="/goods">
-        <template slot="title">
-          <i class="el-icon-location"></i>
-          <span>商品管理</span>
-        </template>
-        <el-menu-item index="/goods/goods-list">商品列表</el-menu-item>
-        <el-menu-item index="/goods/goods-add">商品添加</el-menu-item>
-        <el-menu-item index="/goods/goods-cate">商品分类</el-menu-item>
-      </el-submenu>
-
-      <!-- 店铺管理 -->
-      <el-menu-item index="/shop">
-        <i class="el-icon-menu"></i>
-        <span slot="title">店铺管理</span>
-      </el-menu-item>
-
-      <!-- 账号管理 -->
-      <el-submenu index="/accounts">
-        <template slot="title">
-          <i class="el-icon-location"></i>
-          <span>账号管理</span>
-        </template>
-        <el-menu-item index="/accounts/accounts-list">账号列表</el-menu-item>
-        <el-menu-item index="/accounts/account-add">添加账号</el-menu-item>
-        <el-menu-item index="/accounts/pwd-modify">修改密码</el-menu-item>
-        <el-menu-item index="/accounts/personal">个人中心</el-menu-item>
-      </el-submenu>
-
-      <!-- 销售统计 -->
-      <el-submenu index="/sale-statistics">
-        <template slot="title">
-          <i class="el-icon-location"></i>
-          <span>销售统计</span>
-        </template>
-        <el-menu-item index="/sale-statistics/goods-statistics">商品统计</el-menu-item>
-        <el-menu-item index="/sale-statistics/order-statistics">订单统计</el-menu-item>
-      </el-submenu>
+        <!-- 有二级菜单的 -->
+        <el-submenu v-else :key="menu.path" :index="menu.path">
+          <template slot="title">
+            <i :class="menu.meta.icon"></i>
+            <span>{{menu.meta.title}}</span>
+          </template>
+          <el-menu-item
+            v-for="item in menu.children"
+            :key="item.path"
+            :index="item.path"
+          >{{item.meta.title}}</el-menu-item>
+        </el-submenu>
+      </template>
+    </el-menu>
+  </el-col>
+</template>
     </el-menu>
   </el-col>
 </template>
 
 <script>
+import local from "@/utils/local";
+
 export default {
-  components: {},
-  methods: {},
+  data() {
+    return {
+      visibleMenu: []
+    };
+  },
+
   computed: {
+    //   通过当前页面的地址激活对应地址的导航
     currActiveFun() {
       // 如果是订单编辑页面    则将订单列表的路由赋值给 导航的默认激活属性 default-active
       if (this.$route.path === "/order/order-edit") return "/order/order-list";
+      //   if (this.$route.path.includes("home")) return "/home";
       return this.$route.path;
     }
+  },
+
+  created() {
+    // 从本地取出当前用户角色对应的导航
+    this.visibleMenu = local.get("visibleMenu");
+    // console.log(this.visibleMenu);
   }
 };
 </script>

@@ -53,8 +53,8 @@
             </el-form-item>
             <el-form-item label="修改用户组" label-width="100px">
               <el-select v-model="editForm.userGroup" placeholder="请选择用户组">
-                <el-option label="超级管理员" value="superManager"></el-option>
-                <el-option label="管理员" value="manager"></el-option>
+                <el-option label="超级管理员" value="超级管理员"></el-option>
+                <el-option label="管理员" value="普通管理员"></el-option>
               </el-select>
             </el-form-item>
           </el-form>

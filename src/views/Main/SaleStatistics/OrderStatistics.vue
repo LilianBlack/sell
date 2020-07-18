@@ -1,121 +1,97 @@
 <template>
   <div class="goods-statistics">
     <div class="search">
-      <el-form :inline="true" :model="formInline" class="demo-form-inline">
-        <el-form-item class="start-time" label="时间范围">
-          <el-input prefix-icon="el-icon-alarm-clock" v-model="formInline.user" placeholder="开始日期"></el-input>
+      <!-- 搜索表单 -->
+      <el-form :inline="true" class="demo-form-inline" label-width="50">
+        <el-form-item label="商品统计">
+          <el-date-picker
+            v-model="searchDate"
+            type="datetimerange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            value-format="yyyy-MM-dd  HH:mm:ss"
+          ></el-date-picker>
         </el-form-item>
-        <el-form-item class="end-time" label="至">
-          <el-input v-model="formInline.region" placeholder="结束日期"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="onSubmit">查询</el-button>
-        </el-form-item>
+
+        <el-button @click="search" type="primary">查询</el-button>
+        <el-button @click="reset" type="success">重置</el-button>
       </el-form>
     </div>
+
+    <!-- 使用组件 生成报表 -->
     <div>
-      <div ref="chart" class="my-echarts"></div>
+      <BarChart :diliverOption="diliverOption" class="my-echarts"></BarChart>
     </div>
   </div>
 </template>
 
 <script>
+import BarChart from "@/components/Charts/BarChart.vue";
+import { getOrderChartData } from "@/api/order";
+import moment from "moment";
+
 export default {
-  components: {},
+  components: { BarChart },
+
   data() {
     return {
-      startTime: "",
-      endTime: "",
-      formInline: {
-        user: "",
-        region: ""
+      searchDate: [],
+      diliverOption: {
+        title: "商品统计",
+        legend: ["订单金额"],
+        xAxis: [],
+        series: []
       }
     };
   },
-  mounted() {
-    // ounted生命周期函数中实例化echarts对象
+
+  created() {
+    //   生命周期函数中实例化echarts对象
     this.getEchartData();
   },
   methods: {
-    onSubmit() {
-      console.log("submit!");
+    // 提交搜索   发送ajax
+    search() {
+      this.getEchartData();
     },
-    getEchartData() {
-      const chart = this.$refs.chart;
-      if (chart) {
-        const myChart = this.$echarts.init(chart);
-        const option = {
-          title: {
-            text: "折线图堆叠"
-          },
-          tooltip: {
-            trigger: "axis"
-          },
-          legend: {
-            data: ["邮件营销", "联盟广告", "视频广告", "直接访问", "搜索引擎"]
-          },
-          grid: {
-            left: "3%",
-            right: "4%",
-            bottom: "3%",
-            containLabel: true
-          },
-          toolbox: {
-            feature: {
-              saveAsImage: {}
-            }
-          },
-          xAxis: {
-            type: "category",
-            boundaryGap: false,
-            data: ["周一", "周二", "周三", "周四", "周五", "周六", "周日"]
-          },
-          yAxis: {
-            type: "value"
-          },
-          series: [
-            {
-              name: "邮件营销",
-              type: "line",
-              stack: "总量",
-              data: [120, 132, 101, 134, 90, 230, 210]
-            },
-            {
-              name: "联盟广告",
-              type: "line",
-              stack: "总量",
-              data: [220, 182, 191, 234, 290, 330, 310]
-            },
-            {
-              name: "视频广告",
-              type: "line",
-              stack: "总量",
-              data: [150, 232, 201, 154, 190, 330, 410]
-            },
-            {
-              name: "直接访问",
-              type: "line",
-              stack: "总量",
-              data: [320, 332, 301, 334, 390, 330, 320]
-            },
-            {
-              name: "搜索引擎",
-              type: "line",
-              stack: "总量",
-              data: [820, 932, 901, 934, 1290, 1330, 1320]
-            }
-          ]
-        };
-        myChart.setOption(option);
-        window.addEventListener("resize", function() {
-          myChart.resize();
-        });
-      }
-      this.$on("hook:destroyed", () => {
-        window.removeEventListener("resize", function() {
-          myChart.resize();
-        });
+
+    // 点击重置
+    reset() {
+      this.searchDate = [];
+      this.getEchartData(); //清空后重新获取数据
+    },
+
+    async getEchartData() {
+      console.log(this.searchDate);
+
+      let { data } = await getOrderChartData({
+        date:
+          this.searchDate === null
+            ? JSON.stringify([])
+            : JSON.stringify(this.searchDate)
       });
+
+      this.diliverOption.xAxis = data.map(v => {
+        return moment(v.orderTime).format("YYYY-MM-DD hh:mm:ss");
+      });
+
+      //   this.diliverOption.series = data.map(v => {
+      //     return {
+      //       name: "订单金额",
+      //       type: "line", //图像类型
+      //       data: v.orderAmount
+      //     };
+      //   });
+
+      this.diliverOption.series = {
+        name: "订单金额",
+        type: "bar", //图像类型
+        data: data.map(v => v.orderAmount)
+      };
+
+      //   console.log(" this.diliverOption.xAxis", this.diliverOption.xAxis);
+      console.log(" this.diliverOption.series ", this.diliverOption.series);
     }
   }
 };
@@ -124,16 +100,5 @@ export default {
 <style lang="less" scoped>
 .goods-statistics {
   margin-top: 20px;
-  /deep/ .el-form {
-    /deep/ .el-form-item {
-      label {
-      }
-    }
-  }
-  .my-echarts {
-    background: #fff;
-    height: 400px;
-    margin-top: 40px;
-  }
 }
 </style>

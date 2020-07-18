@@ -18,3 +18,14 @@ export function editOrderInfo(params) {
 export function getDetailInfo(params) {
     return req.get('/order/detail', params)
 }
+
+
+// 首页报表接口
+export function getHomeChartData() {
+    return req.get('/order/totaldata')
+}
+
+// 订单报表接口
+export function getOrderChartData(params) {
+    return req.get('/order/ordertotal', params)
+}

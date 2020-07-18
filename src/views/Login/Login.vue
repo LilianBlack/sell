@@ -21,6 +21,7 @@
             :suffix-icon="isShowPwd ?  'iconfont icon-zhengyan' : 'iconfont icon-biyan' "
             :type="isShowPwd ? 'text' : 'password'"
             @click.native="changeShowPwd"
+            @keydown.native="keyDownToSub"
             prefix-icon="iconfont icon-suo"
             v-model="loginForm.password"
             autocomplete="off"
@@ -44,6 +45,9 @@ import { checkLogin } from "@/api/account";
 
 // 引入local工具函数
 import local from "@/utils/local";
+
+// 引入方法 创建路由
+import { createRoutes } from "@/router";
 
 export default {
   data() {
@@ -79,20 +83,27 @@ export default {
     };
   },
   methods: {
+    // keyDownToSub  回车键提交
+    keyDownToSub(e) {
+      if (e.keyCode === 13) {
+        this.submitForm();
+      }
+    },
+
     //   点击提交  触发表单所有验证
     submitForm() {
       this.$refs.loginForm.validate(async valid => {
         if (valid) {
           // 通过前段验证  -- 发送ajax  登陆请求
           //   解构 ajax请求返回的数据
-          let { code, msg, role, token } = await checkLogin(this.loginForm);
+          let { code, role, token } = await checkLogin(this.loginForm);
           if (code === 0) {
             local.set("t_k", token); //把token存入本地
-            local.set("account", this.loginForm.account);
-            this.$message({ type: "success", message: msg }); //登录成功提示
+            local.set("account", this.loginForm.account); //存入账户名
+            local.set("role", role);
+            // 创建路由
+            createRoutes();
             this.$router.push("/");
-          } else if (code === 1) {
-            this.$message.error(msg);
           }
         } else {
           alert("登月失败");
@@ -126,6 +137,7 @@ export default {
     }
     /deep/ .el-input .el-input__inner {
       background: transparent;
+      color: #fff;
     }
     /deep/ .el-button {
       width: 100%;
